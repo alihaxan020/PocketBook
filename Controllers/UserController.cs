@@ -15,7 +15,12 @@ namespace PocketBook.Controllers
             _logger = logger;
             _unitOfWork = unitOfWork;
         }
-
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var users = await _unitOfWork.Users.All();
+            return Ok(users);
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetItem(Guid id)
         {
@@ -50,6 +55,18 @@ namespace PocketBook.Controllers
             await _unitOfWork.Users.Upsert(user);
             await _unitOfWork.CompleteAsync();
             return NoContent();
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteItem(Guid id)
+        {
+            var item = await _unitOfWork.Users.GetById(id);
+            if (item == null)
+            {
+                return BadRequest();
+            }
+            await _unitOfWork.Users.Delete(id);
+            await _unitOfWork.CompleteAsync();
+            return new JsonResult(new { message = "User has been deleted successfully", id = id });
         }
 
     }
