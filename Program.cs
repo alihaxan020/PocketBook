@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PocketBook.Core.IConfiguration;
 using PocketBook.Data;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
-
+// adding the Unit of Work to the Dependency Injection(DI)  container
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
